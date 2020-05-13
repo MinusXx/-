@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="gb2312">
+        <title>网页框架页面</title>
+<style>
+		*{
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			iframe {
+				width: 100%;
+				height: 100%;
+				padding: 0;
+				margin: 0
+			}
+
+			#wrap {
+				width: 100%;
+				height: 100%;
+				overflow-x: hidden;
+			}
+
+			iframe {
+				border: none;
+			}
+		</style>
+
+    </head>
+    <body>
+<div id="wrap">
+ <iframe src="China.html" ></iframe>
+<iframe src="shishibobao.html" ></iframe>
+<iframe src="zhishikepu.html" ></iframe>
+<iframe src="jingwaishuru.html" ></iframe>
+</div>		
+<script>
+    if (document.getElementsByTagName('meta').length > 1) {
+	var oMeta = document.getElementsByTagName('meta')[1]; //第二个
+	oMeta.content = '';
+	}
+</script>
+</body>
+</html>
