@@ -1,0 +1,48 @@
+//使用该url来进行数据爬取，得到数据存储在data里，所获得的是json文件，后期还要处理后放入数据库
+$url =  'https://view.inews.qq.com/g2/getOnsInfo?name=disease_h5';
+$html = file_get_contents($url);
+$data=json_decode($html,TRUE);
+print_r($data);
+
+//手动把json格式数据字符串中影响转换数组的外侧双引号去除
+$sub_str = substr_replace($str,"",16,1);
+$us = substr_replace($sub_str,"",strlen($sub_str)-2,1);
+$sub_table = preg_replace('# #', '',$us);//去除所有空格
+$table=json_decode($sub_table,TRUE);
+$datas = $table['data'];
+var_dump($datas);
+
+//连接数据库
+<?php
+$servername = "localhost";//服务器名称
+$username = "root";//数据库用户名
+$password = "";//数据库密码
+$dbname = "inland";//数据库名称
+ 
+// 创建连接
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+if(!$conn){
+	die("连接失败".mysqli_connect_error());
+	}
+
+$conn = mysqli_connect("localhost","root","","inland");
+$conn->query("SET NAMES utf8");
+
+
+//把爬取到的已经存储为数组的各类数据存入数据库
+$province = $datas['areaTree'][0]['children'];
+for($i = 0; $i < count($province); $i++) {
+	$name=$province[$i]['name'];
+	$con=$province[$i]['total']['confirm'];
+	$nowCon=$province[$i]['total']['nowConfirm'];
+	$sus=$province[$i]['total']['suspect'];
+	$dead=$province[$i]['total']['dead'];
+	$dearate=$province[$i]['total']['deadRate'];
+	$heal=$province[$i]['total']['heal'];
+	$healrate=$province[$i]['total']['healRate'];
+	//$sql="insert into province_realtime values('$name','$con','$nowCon','$sus','$dead','$dearate','$heal','$healrate')";//第一次手动插入数据
+	$sql="update province_realtime set confirm='$con',nowConfirm='$nowCon',suspect='$sus',dead='$dead',deadRate='$dearate',heal='$heal',healRate='$healrate' where name='$name'";//之后只使用更新语句进行更新数据
+	if(!mysqli_query($conn,$sql)){echo "error".$sql."<br>".mysqli_error($conn);}else{echo "ok";}
+	}
+	mysqli_close($conn);
+}
